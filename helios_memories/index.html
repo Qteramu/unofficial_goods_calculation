@@ -70,7 +70,7 @@ const SECTORS = [
  {key:"east",name:"イースト",full:"イーストセクター",english:"East sector",members:["グレイ・リヴァース","ビリー・ワイズ","ジェイ・キッドマン","アッシュ・オルブライト"]},
  {key:"12th",name:"12th Robins",full:"12th Robins",english:"12th Robins",members:["セイジ・スカイフォール","ニコ","ジュード・アレス","ビアンキ・ロウ"]}
 ];
-let selectedTabs = new Set(["common"]);
+let selectedTabs = new Set(); // 初期表示は全商品
 const yen = n => "¥" + Number(n||0).toLocaleString("ja-JP");
 const esc = s => String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let state = {qty:{}, budget:""};
@@ -168,9 +168,11 @@ function render(){
    if(kind==="normal"){
     body=`<div class="variantrow"><div class="variantname">購入数</div><div class="unit">${yen(p.price)} / 個</div>${makeQty(p.id,"main",lineQty(p.id,"main"))}</div>`;
    }else if(kind==="variants"){
-    body=indices.map(i=>{const v=p.variants[i];return `<div class="variantrow"><div class="variantname">${esc(v)}</div><div class="unit">${yen(p.price)}</div>${makeQty(p.id,"v"+i,lineQty(p.id,"v"+i))}</div>`;}).join("");
+    const shownIndices=indices===null?p.variants.map((_,i)=>i):indices;
+    body=shownIndices.map(i=>{const v=p.variants[i];return `<div class="variantrow"><div class="variantname">${esc(v)}</div><div class="unit">${yen(p.price)}</div>${makeQty(p.id,"v"+i,lineQty(p.id,"v"+i))}</div>`;}).join("");
    }else{
-    body=indices.map(i=>{const v=p.variants[i];return `<div class="randomtype"><div class="randomtypehead"><div class="variantname">${esc(v.name)}</div><div class="unit">${esc(v.note||"")}</div></div><div class="randomcontrols"><div class="randombuy"><div class="buylabel">単品<small>${yen(v.price)} / パック</small></div>${makeQty(p.id,"v"+i+"_pack",lineQty(p.id,"v"+i+"_pack"))}</div><div class="randombuy"><div class="buylabel">BOX<small>${yen(v.boxPrice)} / ${v.boxCount}点入り</small></div>${makeQty(p.id,"v"+i+"_box",lineQty(p.id,"v"+i+"_box"))}</div></div></div>`;}).join("");
+    const shownIndices=indices===null?p.variants.map((_,i)=>i):indices;
+    body=shownIndices.map(i=>{const v=p.variants[i];return `<div class="randomtype"><div class="randomtypehead"><div class="variantname">${esc(v.name)}</div><div class="unit">${esc(v.note||"")}</div></div><div class="randomcontrols"><div class="randombuy"><div class="buylabel">単品<small>${yen(v.price)} / パック</small></div>${makeQty(p.id,"v"+i+"_pack",lineQty(p.id,"v"+i+"_pack"))}</div><div class="randombuy"><div class="buylabel">BOX<small>${yen(v.boxPrice)} / ${v.boxCount}点入り</small></div>${makeQty(p.id,"v"+i+"_box",lineQty(p.id,"v"+i+"_box"))}</div></div></div>`;}).join("");
    }
    const meta=kind==="random_group"?"種類別に入力":yen(p.price);
    html+=`<details class="product" data-product="${p.id}"><summary class="prodhead"><span class="prodname">${esc(p.name)}</span><span class="prodmeta">${meta}</span><span class="subtotal">${yen(t.amount)}</span></summary><div class="prodbody">${body}</div></details>`;
@@ -250,7 +252,7 @@ document.getElementById("restoreFile").addEventListener("change",async e=>{
   state=next;save();render();alert("バックアップを復元しました！");
  }catch(err){alert("バックアップを読み込めませんでした。");}e.target.value="";
 });
-document.getElementById("reset").addEventListener("click",()=>{if(confirm("入力した個数と予算をすべてリセットしますか？")){state={qty:{},budget:""};save();render();}});
+document.getElementById("reset").addEventListener("click",()=>{if(confirm("入力した個数と予算をすべてリセットしますか？")){state={qty:{},budget:""};selectedTabs.clear();save();render();}});
 render();
 </script>
 </body></html>
