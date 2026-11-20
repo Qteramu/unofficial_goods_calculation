@@ -1,1 +1,396 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ActionStage HELIOS RISING HEROES NewDawn | GOODS CALCULATOR</title>
+<style>
+:root{
+  --ink:#493642;--muted:#91818d;--lav:#b17b98;--accent:#9b6683;
+  --line:#eadde5;--bg:#fcf8fa;--white:#fff;--pink:#d9b7c8;
+  --gold:#c4a36e;--gold-soft:#eadbc0;
+  --shadow:0 8px 24px rgba(93,54,76,.065);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;line-height:1.55}
+.wrap{max-width:960px;margin:auto;padding:20px 26px 56px}
+.page-title{text-align:center;padding:4px 10px 16px}
+.title-eyebrow{font-family:inherit;font-size:11px;letter-spacing:.24em;color:#9b83c4;font-weight:700}
+.page-title h1{font-family:inherit;font-size:clamp(23px,5vw,34px);line-height:1.2;letter-spacing:.04em;color:#51456b;margin:5px 0 2px;font-weight:600}
+.title-sub{font-family:inherit;font-size:13px;letter-spacing:0;color:#898397;font-weight:400}
+.title-tagline{font-size:10px;letter-spacing:.2em;color:#a39bad;margin-top:8px}
 
+.notice{height:40px;border:1px solid var(--line);border-radius:12px;background:#fff;color:#82798f;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:0 12px;font-size:11px;margin-bottom:12px}
+.summary{background:#fff;border:1px solid var(--line);border-radius:19px;padding:15px 16px 14px;
+  display:grid;grid-template-columns:1fr 1fr;gap:2px 16px;box-shadow:var(--shadow)}
+.total-block{min-width:0}
+.total-block.right{text-align:right;align-self:center}
+.total-label{font-size:10px;letter-spacing:.13em;color:#8c829c;font-weight:500}
+.total-price{font-size:34px;line-height:1.25;font-weight:750;color:#7259a0;letter-spacing:-.04em}
+.total-items{font-size:15px;line-height:1.4;font-weight:700;color:#453e50}
+.budget{grid-column:1/-1;display:grid;grid-template-columns:auto 130px 1fr;align-items:center;gap:9px;margin-top:5px;color:#8a8297;font-size:11px}
+.budget input{width:130px;height:40px;border:1px solid #e5dced;border-radius:10px;padding:7px 10px;text-align:center;background:#fff;color:var(--ink);font:inherit;font-size:15px;outline:none}
+.budget input:focus{border-color:#aa95cf;box-shadow:0 0 0 3px #a88dc51c}
+.budget-status{text-align:right;font-size:11px;color:#8a8297}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 14px}
+.btn{height:38px;border:1px solid #d9cbe9;background:#fff;color:#806aa6;border-radius:12px;padding:0 13px;
+  font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn.primary{background:#9179bc;color:#fff;border-color:#9179bc}
+.btn.danger{border-color:#efc9d4;color:#c36d88}
+.btn:active{transform:translateY(1px)}
+.tabs{display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;padding:3px 1px 11px;scrollbar-width:thin;scrollbar-color:#999 #eee}
+.tab{flex:0 0 auto;white-space:nowrap;height:36px;border:1px solid #ddcfee;background:#fff;color:#806aa6;
+  border-radius:999px;padding:0 13px;font-size:11px;font-weight:700;cursor:pointer}
+.tab.active{background:#9279bd;border-color:#9279bd;color:#fff}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:1px 0 9px;padding:0 1px}
+.section-title h2{font-size:12px;font-weight:600;color:#8a8297;margin:0;letter-spacing:.02em}
+.section-title span{font-size:10px;color:#9991a4}
+.product{background:#fff;border:1px solid var(--line);border-radius:13px;margin:9px 0;box-shadow:0 3px 12px rgba(74,55,105,.035);overflow:hidden}
+.product summary{list-style:none;cursor:pointer;padding:12px 14px;display:grid;grid-template-columns:1fr auto 17px;gap:12px;align-items:center}
+.product summary::-webkit-details-marker{display:none}
+.prod-name{font-size:12px;font-weight:700;color:#494154}
+.prod-meta{font-size:10px;color:#9b93a5;margin-top:2px}
+.prod-price{font-weight:700;font-size:13px;white-space:nowrap;color:#554b63;text-align:right}
+.chev{color:#9a91aa;font-size:15px;transition:transform .15s}
+.product[open] .chev{transform:rotate(180deg)}
+.inside{padding:10px 13px 13px;border-top:1px solid #f1edf5}
+.variant-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:7px}
+.variant{border:1px solid #eee9f3;border-radius:9px;padding:8px 9px;display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0;background:#fff}
+.variant{flex-wrap:wrap}
+.variant .counter{margin-left:auto;max-width:100%}
+
+.variant-name{font-size:11px;font-weight:600}
+.counter{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.counter button[data-step="10"],.counter button[data-step="-10"]{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:38px;min-width:38px;max-width:38px;height:27px;padding:0;
+  flex:0 0 38px;white-space:nowrap;word-break:keep-all;overflow:hidden;
+  font-size:10px;line-height:1
+}
+
+.counter button{width:27px;height:27px;border:1px solid #e1d9eb;background:#fbf9fd;border-radius:7px;color:#79669c;cursor:pointer;font-weight:700;font-size:13px}
+.counter button:active{background:#eee8f6}
+.counter input{width:40px;height:27px;text-align:center;border:1px solid #e1d9eb;border-radius:7px;padding:3px 1px;font:inherit;font-size:11px;color:var(--ink);background:white}
+.line-total{font-size:10px;color:#91889e;text-align:right;min-width:54px;margin-top:2px}
+.empty{font-size:11px;color:var(--muted);text-align:center;padding:28px 10px}
+textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:10px;padding:10px;font:12px/1.5 ui-monospace,monospace}
+.modal{position:fixed;inset:0;background:#211a2b88;display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal.show{display:flex}
+.modalbox{background:white;border-radius:16px;padding:18px;max-width:620px;width:100%;max-height:85vh;overflow:auto}
+.modalbox h3{margin:0 0 10px;font-size:15px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+@media(max-width:560px){
+ .wrap{padding:14px 11px 40px}.notice{font-size:10px;height:auto;min-height:40px}
+ .summary{padding:14px 15px}.total-price{font-size:32px}.budget{grid-template-columns:auto 116px 1fr;gap:7px}
+ .budget input{width:116px}.actions{gap:7px;margin:16px 0 13px}.btn{padding:0 10px;font-size:10px}
+ .tab{padding:0 12px}.product summary{grid-template-columns:1fr auto 14px;gap:8px;padding:11px}
+ .variant-list{grid-template-columns:1fr}
+}
+
+/* Midnight Rose theme */
+body{background:radial-gradient(ellipse at 50% -18%,#fff 0%,#fcf8fa 54%,#f8f0f4 100%);color:var(--ink)}
+.page-title{position:relative;padding:10px 10px 17px}
+.title-eyebrow{color:#a77b91;letter-spacing:.2em}
+.page-title h1{color:#654457;letter-spacing:.055em}
+.title-sub{color:#966b82}
+.title-tagline{color:#b08a9b;letter-spacing:.19em}
+.notice{background:rgba(255,255,255,.82);border-color:#e7d5df;color:#8d7b87;box-shadow:0 3px 12px rgba(93,54,76,.025)}
+.summary{background:linear-gradient(135deg,#fff 0%,#fffafb 72%,#fbf3f6 100%);border-color:#e8d8df;box-shadow:0 8px 25px rgba(93,54,76,.07);position:relative}
+.summary:after{content:"";position:absolute;inset:4px;border:1px solid rgba(196,163,110,.35);border-radius:15px;pointer-events:none}
+.total-label{color:#9b7d8d}
+.total-price{color:#80536d}
+.total-items{color:#604653}
+.budget{color:#8d7885}
+.budget input{border-color:#e5d4df;background:#fffdfd}
+.budget input:focus{border-color:#c59aaf;box-shadow:0 0 0 3px #c59aaf20}
+.budget-status{color:#927d88}
+.actions .btn{border-color:#dfcbd6;color:#865d73;background:#fffdfd}
+.actions .btn.primary{background:linear-gradient(135deg,#a87591,#89566f);border-color:#96647e;color:#fff;box-shadow:0 3px 9px rgba(137,86,111,.15)}
+.actions .btn.danger{border-color:#e8cbd6;color:#bd718d}
+.tab{border-color:#e4d2dd;color:#865d73;background:rgba(255,255,255,.88)}
+.tab.active{background:#98677f;border-color:#98677f;color:#fff;box-shadow:0 3px 9px rgba(137,86,111,.13)}
+.section-title h2{color:#927d89}
+.product{border-color:#eadde5;box-shadow:0 4px 13px rgba(93,54,76,.04)}
+.product summary{background:linear-gradient(90deg,#fff 0%,#fffafb 100%)}
+.prod-name{color:#594250}
+.prod-meta{color:#a18e99}
+.prod-price{color:#775468}
+.chev{color:#b08a9b}
+.inside{border-top-color:#f2e9ee;background:#fffdfd}
+.variant{border-color:#eee2e9;background:#fff}
+.variant-name{color:#604b58}
+.counter button{border-color:#e5d4df;background:#fcf7fa;color:#8e6279}
+.counter button:active{background:#f2e3eb}
+.counter input{border-color:#e5d4df;color:#594250}
+.line-total{color:#a08d98}
+.title-tagline:before,.title-tagline:after{content:"✦";color:var(--gold);font-size:9px;margin:0 10px}
+@media(max-width:560px){
+ .summary:after{inset:3px}
+ .title-tagline{font-size:9px}
+ .title-tagline:before,.title-tagline:after{margin:0 5px}
+}
+
+
+/* Main title only: Cinzel */
+.page-title h1{
+  font-family:"Cinzel",serif;
+  font-weight:600;
+  letter-spacing:.075em;
+}
+
+
+/* Separate regular and random goods into clear, matching sections */
+.goods-subsection{margin-top:4px}
+.goods-subsection + .goods-subsection{margin-top:23px;padding-top:15px;border-top:1px solid #e8d8df}
+.subsection-title{margin:0 1px 8px;padding:0 1px 5px;border-bottom:1px solid #eadde5}
+.subsection-title h2{font-size:13px;letter-spacing:.08em;color:#80566d}
+.subsection-title span{font-size:10px;color:#b08a9b;letter-spacing:.08em}
+.random-section .subsection-title h2:before{content:"✦";color:#c4a36e;font-size:10px;margin-right:7px}
+
+
+.page-footer{margin:28px 0 0;padding:17px 10px 4px;border-top:1px solid #eadde5;text-align:center;color:#91818d;font-size:11px;line-height:1.9}
+.page-footer p{margin:2px 0}
+.page-footer a{display:inline-block;margin-top:8px;color:#98677f;text-decoration:none;font-weight:700;letter-spacing:.04em;border-bottom:1px solid #d9b7c8;padding:2px 3px}
+.page-footer a span{color:#c4a36e;margin-left:4px}
+
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<main class="wrap">
+  <header class="page-title">
+    <div class="title-eyebrow">ActionStage</div>
+    <h1>HELIOS RISING HEROES</h1>
+    <div class="title-sub">NewDawn</div>
+    <div class="title-tagline">GOODS LIST &amp; PRICE CALCULATOR</div>
+  </header>
+  <div class="notice">当ページは、個人用の非公式ファンツールです。公式とは一切関係ありません。掲載価格はすべて税込です。</div>
+  <section class="summary">
+    <div class="total-block">
+      <div class="total-label">TOTAL PRICE</div>
+      <div class="total-price" id="totalPrice">¥0</div>
+    </div>
+    <div class="total-block right">
+      <div class="total-label">TOTAL ITEMS</div>
+      <div class="total-items" id="totalItems">0点</div>
+    </div>
+    <div class="budget">
+      <label for="budget">予算</label>
+      <input id="budget" type="number" min="0" step="100" placeholder="未設定">
+      <span class="budget-status" id="budgetStatus">予算未設定</span>
+    </div>
+  </section>
+  <div class="actions">
+    <button class="btn primary" id="copyBtn">購入リストをコピー</button>
+    <button class="btn" id="backupBtn">テキストでバックアップ</button>
+    <button class="btn" id="restoreBtn">バックアップから復元</button>
+    <button class="btn danger" id="resetBtn">すべてリセット</button>
+  </div>
+  <nav class="tabs" id="tabs" aria-label="商品カテゴリ"></nav>
+  <div class="section-title"><h2 id="listTitle">全商品を表示中</h2><span id="goodsCount"></span></div>
+  <section id="goods"></section>
+
+<footer class="page-footer">
+  <p>入力内容はこのブラウザに自動保存されます。</p>
+  <p>※購入上限は設定されていません。</p>
+  <a href="howto.html">使い方を見る <span aria-hidden="true">›</span></a>
+</footer>
+
+</main>
+<div class="modal" id="modal">
+  <div class="modalbox">
+    <h3 id="modalTitle">バックアップ</h3>
+    <textarea id="modalText" spellcheck="false"></textarea>
+    <div class="modal-actions">
+      <button class="btn" id="modalClose">閉じる</button>
+      <button class="btn primary" id="modalApply">復元する</button>
+    </div>
+  </div>
+</div>
+<input type="file" id="restoreFile" accept=".txt,text/plain" hidden>
+<script>
+const chars=[
+ {key:'キース・マックス',label:'キース'},
+ {key:'レオナルド・ライト・Jr',label:'ジュニア'},
+ {key:'フェイス・ビームス',label:'フェイス'},
+ {key:'オスカー・ベイル',label:'オスカー'},
+ {key:'ジェイ・キッドマン',label:'ジェイ'},
+ {key:'ディノ・アルバーニ',label:'ディノ'},
+ {key:'シリウス',label:'シリウス'},
+ {key:'シン',label:'シン'},
+ {key:'シャムス',label:'シャムス'},
+ {key:'ブラッド・ビームス',label:'ブラッド'}
+];
+const charKeys=chars.map(c=>c.key);
+const charLabel=key=>(chars.find(c=>c.key===key)||{label:key}).label;
+const five=['キース・ブラッド','ジュニア・フェイス','オスカー・ジェイ','ディノ・シリウス','シン・シャムス'];
+const goods=[
+ {id:'pamphlet',name:'公演パンフレット',price:3000,type:'common'},
+ {id:'bromaA',name:'個人ブロマイドセットA',price:750,type:'variants',variants:charKeys,meta:'全10種'},
+ {id:'bromaB',name:'個人ブロマイドセットB',price:750,type:'variants',variants:charKeys,meta:'全10種'},
+ {id:'randomBroma',name:'ランダムブロマイド',price:250,type:'random',meta:'全30種・ランダム'},
+ {id:'random2L',name:'2Lランダムブロマイド',price:500,type:'random',meta:'全16種・ランダム'},
+ {id:'channel',name:'【HELIOS∞CHANNEL】風COLLECTION',price:600,type:'random',meta:'全20種・ランダム'},
+ {id:'clear',name:'BEST CLEAR COLLECTION',price:400,type:'random',meta:'全30種・ランダム'},
+ {id:'overlap',name:'重なるクリアブロマイドセット',price:800,type:'variants',variants:five,meta:'全5種'},
+ {id:'ticket',name:'チケット風デザインシール',price:800,type:'variants',variants:five,meta:'全5種'},
+ {id:'mcard',name:'ライブパート楽曲Mカード',price:2800,type:'common'},
+ {id:'penlight',name:'ペンライト',price:2700,type:'common',meta:'全10色'},
+ {id:'stand',name:'オーロラアクリルスタンド',price:1700,type:'variants',variants:charKeys,meta:'全10種'}
+];
+const storageKey='eriste6th_goods_calc_v1';
+let state={qty:{},budget:''},selectedTabs=new Set();
+const $=id=>document.getElementById(id);
+const yen=n=>'¥'+Number(n).toLocaleString('ja-JP');
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function load(){
+ try{const s=JSON.parse(localStorage.getItem(storageKey)||'{}');if(s&&s.qty)state=s}catch(e){}
+ $('budget').value=state.budget||'';
+}
+function save(){state.budget=$('budget').value;localStorage.setItem(storageKey,JSON.stringify(state));updateTotals()}
+function qty(id,key=''){return Math.max(0,Number(state.qty[id+'__'+key]||0))}
+function setQty(id,key,val){state.qty[id+'__'+key]=Math.max(0,Math.floor(Number(val)||0));save();renderGoods()}
+function getCount(g){if(g.type==='variants')return g.variants.reduce((a,c)=>a+qty(g.id,c),0);return qty(g.id)}
+function getSum(g){return getCount(g)*g.price}
+function updateTotals(){
+ let sum=0,count=0;goods.forEach(g=>{sum+=getSum(g);count+=getCount(g)});
+ $('totalPrice').textContent=yen(sum);$('totalItems').textContent=count.toLocaleString('ja-JP')+'点';
+ const raw=$('budget').value,b=Number(raw);
+ $('budgetStatus').textContent=!raw?'予算未設定':sum>b?'予算を'+yen(sum-b)+'超過':'残り '+yen(b-sum);
+ $('budgetStatus').style.color=raw&&sum>b?'#c36d88':'#8a8297';
+}
+function tabs(){
+ const items=[['all','すべて'],['common','共通商品'],...chars.map(c=>['char:'+c.key,c.label])];
+ $('tabs').innerHTML=items.map(([id,label])=>{
+  const isActive=id==='all'?selectedTabs.size===0:selectedTabs.has(id);
+  return `<button class="tab ${isActive?'active':''}" data-tab="${esc(id)}" aria-pressed="${isActive}">${esc(label)}</button>`;
+ }).join('');
+ $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  const id=b.dataset.tab;
+  if(id==='all')selectedTabs.clear();
+  else if(selectedTabs.has(id))selectedTabs.delete(id);
+  else selectedTabs.add(id);
+  tabs();renderGoods();
+ });
+}
+function pairMatchesCharacter(pair,characterKey){
+ const pairToCharacters={
+  'キース・ブラッド':['キース・マックス','ブラッド・ビームス'],
+  'ジュニア・フェイス':['レオナルド・ライト・Jr','フェイス・ビームス'],
+  'オスカー・ジェイ':['オスカー・ベイル','ジェイ・キッドマン'],
+  'ディノ・シリウス':['ディノ・アルバーニ','シリウス'],
+  'シン・シャムス':['シン','シャムス']
+ };
+ return (pairToCharacters[pair]||[]).includes(characterKey);
+}
+function visible(g){
+ if(selectedTabs.size===0)return true;
+ if(selectedTabs.has('common')&&(g.type==='common'||g.type==='random'||(g.type==='variants'&&g.variants===five)))return true;
+ for(const id of selectedTabs){
+  if(!id.startsWith('char:'))continue;
+  const characterKey=id.slice(5);
+  if(g.type==='variants'&&g.variants===charKeys&&g.variants.includes(characterKey))return true;
+  if(g.type==='variants'&&g.variants===five&&g.variants.some(pair=>pairMatchesCharacter(pair,characterKey)))return true;
+ }
+ return false;
+}
+function visibleVariants(g){
+ if(selectedTabs.size===0||selectedTabs.has('common'))return g.variants;
+ const selectedCharacters=[...selectedTabs].filter(id=>id.startsWith('char:')).map(id=>id.slice(5));
+ if(g.variants===five)return g.variants.filter(pair=>selectedCharacters.some(key=>pairMatchesCharacter(pair,key)));
+ if(g.variants===charKeys)return g.variants.filter(key=>selectedCharacters.includes(key));
+ return g.variants;
+}
+function variantRow(g,key){
+ const n=qty(g.id,key),label=charKeys.includes(key)?charLabel(key):key;
+ return `<div class="variant"><div><div class="variant-name">${esc(label)}</div><div class="line-total">小計 ${yen(n*g.price)}</div></div>
+ <div class="counter"><button aria-label="1個減らす" data-step="-1" data-id="${g.id}" data-key="${esc(key)}">−</button>
+ <input aria-label="${esc(label)}の数量" type="number" min="0" step="1" value="${n}" data-input="${g.id}" data-key="${esc(key)}">
+ <button aria-label="1個増やす" data-step="1" data-id="${g.id}" data-key="${esc(key)}">＋</button></div></div>`;
+}
+function renderGoods(){
+ const openedProducts = new Set([...document.querySelectorAll("#goods details[open]")].map(el=>el.dataset.product));
+ const list=goods.filter(visible);
+ const selectedLabels=[...selectedTabs].map(id=>id==='common'?'共通商品':charLabel(id.slice(5)));
+ $('listTitle').textContent=selectedTabs.size===0?'全商品を表示中':selectedLabels.join('・')+'を表示中';
+ $('goodsCount').textContent=list.length+' ITEMS';
+ if(!list.length){$('goods').innerHTML='<div class="empty">該当する商品はありません。</div>';return}
+
+ const regular=list.filter(g=>g.type!=='random');
+ const random=list.filter(g=>g.type==='random');
+ function productCard(g){
+  const count=getCount(g),sum=getSum(g),bulk=g.type==='random';
+  const body=g.type==='variants'?`<div class="variant-list">${visibleVariants(g).map(k=>variantRow(g,k)).join('')}</div>`:
+   `<div class="variant"><div><div class="variant-name">数量</div><div class="line-total">小計 ${yen(sum)}</div></div>
+    <div class="counter">${bulk?`<button aria-label="10個減らす" data-step="-10" data-id="${g.id}">−10</button>`:''}
+    <button aria-label="1個減らす" data-step="-1" data-id="${g.id}">−</button>
+    <input aria-label="${g.name}の数量" type="number" min="0" step="1" value="${count}" data-input="${g.id}">
+    <button aria-label="1個増やす" data-step="1" data-id="${g.id}">＋</button>${bulk?`<button aria-label="10個増やす" data-step="10" data-id="${g.id}">＋10</button>`:''}</div></div>`;
+  return `<details class="product" data-product="${g.id}"><summary><div><div class="prod-name">${esc(g.name)}</div>${g.meta?`<div class="prod-meta">${esc(g.meta)}</div>`:''}</div>
+   <div class="prod-price">${yen(g.price)}<div class="prod-meta" style="text-align:right">${count?count+'点 / '+yen(sum):'税込'}</div></div><span class="chev">⌄</span></summary><div class="inside">${body}</div></details>`;
+ }
+ function section(title,items,kind){
+  if(!items.length)return '';
+  return `<div class="goods-subsection ${kind}"><div class="section-title subsection-title"><h2>${title}</h2><span>${items.length} ITEMS</span></div>${items.map(productCard).join('')}</div>`;
+ }
+ $('goods').innerHTML=
+  section('通常商品',regular,'regular-section')+
+  section('ランダム商品',random,'random-section');
+
+ $('goods').querySelectorAll('details[data-product]').forEach(el=>{if(openedProducts.has(el.dataset.product))el.open=true;});
+ $('goods').querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{const id=b.dataset.id,key=b.dataset.key||'';setQty(id,key,qty(id,key)+Number(b.dataset.step))});
+ $('goods').querySelectorAll('[data-input]').forEach(inp=>inp.onchange=()=>setQty(inp.dataset.input,inp.dataset.key||'',inp.value));
+}
+function purchaseText(){
+ const lines=['ActionStage HELIOS RISING HEROES NewDawn グッズ購入リスト',''];
+ goods.forEach(g=>{
+  if(g.type==='variants')g.variants.forEach(key=>{const n=qty(g.id,key);if(n){const label=charKeys.includes(key)?charLabel(key):key;lines.push(`${g.name}／${label}：${n}点 × ${g.price}円 = ${n*g.price}円`)}});
+  else{const n=qty(g.id);if(n)lines.push(`${g.name}：${n}点 × ${g.price}円 = ${n*g.price}円`)}
+ });
+ const total=goods.reduce((a,g)=>a+getSum(g),0),count=goods.reduce((a,g)=>a+getCount(g),0);
+ lines.push('',`合計：${total.toLocaleString('ja-JP')}円`,`合計点数：${count}点`);
+ return lines.join('\n');
+}
+$('copyBtn').onclick=async()=>{
+ try{await navigator.clipboard.writeText(purchaseText());$('copyBtn').textContent='コピーしました！';setTimeout(()=>$('copyBtn').textContent='購入リストをコピー',1600)}
+ catch(e){openModal('購入リストをコピー',purchaseText(),false)}
+};
+function openModal(title,value,apply){$('modalTitle').textContent=title;$('modalText').value=value;$('modalApply').style.display=apply?'inline-block':'none';$('modal').classList.add('show')}
+function backupText(){
+ const rows=["ERISTE_6TH_GOODS_BACKUP_V1",`budget\t${$('budget').value||''}`,...Object.entries(state.qty).map(([k,v])=>`qty\t${k}\t${v}`)];
+ return rows.join('\n');
+}
+$('backupBtn').onclick=()=>{
+ const blob=new Blob([backupText()],{type:'text/plain;charset=utf-8'});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url;a.download='ERISTE_6th_goods_backup.txt';
+ document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+$('restoreBtn').onclick=()=>$('restoreFile').click();
+$('restoreFile').onchange=async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try{
+  const rows=(await file.text()).split(/\r?\n/);
+  if(rows[0].trim()!=="ERISTE_6TH_GOODS_BACKUP_V1")throw Error("形式が違います");
+  const next={qty:{},budget:''};
+  rows.slice(1).forEach(row=>{
+   const c=row.split('\t');
+   if(c[0]==='budget')next.budget=c[1]||'';
+   if(c[0]==='qty'&&c.length>=3)next.qty[c[1]]=Math.max(0,parseInt(c[2],10)||0);
+  });
+  state=next;$('budget').value=state.budget;save();renderGoods();
+  alert('バックアップを復元しました！');
+ }catch(err){alert('バックアップを読み込めませんでした。ファイル形式を確認してください。');}
+ e.target.value='';
+};
+$('resetBtn').onclick=()=>{if(confirm('入力した数量と予算をすべてリセットしますか？')){state={qty:{},budget:''};$('budget').value='';save();renderGoods()}};
+$('budget').onchange=save;
+load();tabs();renderGoods();updateTotals();
+</script>
+</body>
+</html>
